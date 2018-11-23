@@ -12,3 +12,13 @@ app.listen(3000, function () {
 app.get('/', function (req, res) {
     res.send('Hello world!');
 });
+
+const APP_TOKEN = '';
+
+app.get('/webhook', function(req, res) {
+    if(req.query['hub.verify_token'] === '') {
+        res.send(req.query['hub.challenge']);
+    } else {
+        res.send('Welcome to nothingness.');
+    }
+});
