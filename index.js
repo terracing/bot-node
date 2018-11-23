@@ -39,7 +39,7 @@ app.post('/webhook', function(req, res) {
 
 function receiveMessage(messaging) {
     var senderId = messaging.sender.id;
-    var messageText = messaging.sender.text;
+    var messageText = messaging.message.text;
 
     console.log(senderId + ' - ' + messageText);
 }
