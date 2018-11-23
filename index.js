@@ -22,3 +22,24 @@ app.get('/webhook', function(req, res) {
         res.send('Welcome to nothingness.');
     }
 });
+
+app.post('/webhook', function(req, res) {
+    var data = req.body;
+    if(data.object === 'page') {
+        data.entry.forEach(function(pageEntry) {
+            pageEntry.messaging.forEach(function(messagingEvent) {
+                if(messagingEvent.message) {
+                    receiveMessage(messagingEvent);
+                }
+            });
+        });
+        res.sendStatus(200);
+    }
+});
+
+function receiveMessage(messaging) {
+    var senderId = messaging.sender.id;
+    var messageText = messaging.sender.text;
+
+    console.log(senderId + ' - ' + messageText);
+}
