@@ -15,20 +15,20 @@ app.get('/', function (req, res) {
 
 const APP_TOKEN = '';
 
-app.get('/webhook', function(req, res) {
-    if(req.query['hub.verify_token'] === '') {
+app.get('/webhook', function (req, res) {
+    if (req.query['hub.verify_token'] === '') {
         res.send(req.query['hub.challenge']);
     } else {
         res.send('Welcome to nothingness.');
     }
 });
 
-app.post('/webhook', function(req, res) {
+app.post('/webhook', function (req, res) {
     var data = req.body;
-    if(data.object === 'page') {
-        data.entry.forEach(function(pageEntry) {
-            pageEntry.messaging.forEach(function(messagingEvent) {
-                if(messagingEvent.message) {
+    if (data.object === 'page') {
+        data.entry.forEach(function (pageEntry) {
+            pageEntry.messaging.forEach(function (messagingEvent) {
+                if (messagingEvent.message) {
                     receiveMessage(messagingEvent);
                 }
             });
@@ -41,5 +41,48 @@ function receiveMessage(messaging) {
     var senderId = messaging.sender.id;
     var messageText = messaging.message.text;
 
+    evaluateMessage(senderId, messageText);
     console.log(senderId + ' - ' + messageText);
+}
+
+function evaluateMessage(recipientId, message) {
+    var finalMessage = '';
+    if(isContain(message, 'Hi!')) {
+        finalMessage = 'Hi! How are you?';
+    } else {
+        finalMessage = message;
+    }
+    sendMessageText(recipientId, finalMessage);
+}
+
+function isContain(sentence, word) {
+    return sentence.indexOf(word) > -1;
+}
+
+function sendMessageText(recipientId, message) {
+    var messageData = {
+        recipient: {
+            id: recipientId
+        },
+        message: {
+            text: message
+        }
+    }
+    callSendAPI(messageData);
+}
+
+function callSendAPI(messageData) {
+    request({
+        uri: 'https://graph.facebook.com/v2.11/me/messages',
+        qs: {
+            access_token: APP_TOKEN
+        },
+        method: 'POST',
+        json: messageData
+    }, function(err, response, data) {
+        if(err) {
+            console.log(err);
+        }
+        // console.log(response);
+    });
 }
