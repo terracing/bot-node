@@ -49,10 +49,14 @@ function evaluateMessage(recipientId, message) {
     var finalMessage = '';
     if(isContain(message, 'Hi!')) {
         finalMessage = 'Hi! How are you?';
+        sendMessageText(recipientId, finalMessage);
+    } else if(isContain(message, 'cat')) {
+        sendMessageImage(recipientId);
     } else {
         finalMessage = message;
+        sendMessageText(recipientId, finalMessage);
     }
-    sendMessageText(recipientId, finalMessage);
+    
 }
 
 function isContain(sentence, word) {
@@ -66,6 +70,23 @@ function sendMessageText(recipientId, message) {
         },
         message: {
             text: message
+        }
+    }
+    callSendAPI(messageData);
+}
+
+function sendMessageImage(recipientId) {
+    var messageData = {
+        recipient: {
+            id: recipientId
+        },
+        message: {
+            attachment: {
+                type: 'image',
+                payload: {
+                    url: 'https://i.imgur.com/4AiXzf8.jpg'
+                }
+            }
         }
     }
     callSendAPI(messageData);
